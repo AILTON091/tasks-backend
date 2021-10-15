@@ -34,6 +34,23 @@ pipeline {
                 deploy adapters: [tomcat9(credentialsId: 'tomcat_login', path: '', url: 'http://localhost:8001/')], contextPath: 'tasks-backend', war: 'target/tasks-backend.war'
             }
         }
+        stage ('Deploy Frontend'){
+            steps {
+                dir('fronted'){
+                    git credentialsId: 'git_login', url: 'https://github.com/AILTON091/tasks-frontend'
+                    bat 'mvn clean package'
+                    deploy adapters: [tomcat9(credentialsId: 'tomcat_login', path: '', url: 'http://localhost:8001/')], contextPath: 'tasks', war: 'target/tasks.war'
+                }
+            }
+        }
+        stage ('Functional Test'){
+            steps {
+                dir('functional-test'){
+                    git credentialsId: 'git_login', url: 'https://github.com/AILTON091/tasks-funcional-test'
+                    bat 'mvn test'
+                }
+            }
+        }
     }
 }
 
